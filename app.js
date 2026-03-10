@@ -4,6 +4,25 @@ const list = document.getElementById('todo-list');
 
 let todos = JSON.parse(localStorage.getItem('todos') || '[]');
 
+// Set greeting based on time of day in EST
+function setGreeting() {
+    const estTime = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
+    const hour = new Date(estTime).getHours();
+    
+    let timeOfDay;
+    if (hour < 12) {
+        timeOfDay = 'Morning';
+    } else if (hour < 18) {
+        timeOfDay = 'Afternoon';
+    } else {
+        timeOfDay = 'Evenings';
+    }
+    
+    input.placeholder = `Good ${timeOfDay}, Gurt!`;
+}
+
+setGreeting();
+
 function save() {
     localStorage.setItem('todos', JSON.stringify(todos));
 }
@@ -40,6 +59,12 @@ function render() {
         check.addEventListener('click', () => {
             if (todo.faded) return; // cannot toggle after fade
             check.classList.add('bounce', 'done'); // Show green immediately during animation
+            // Play sound only when checking (not unchecking)
+            if (!todo.done) {
+                const audio = new Audio('assets/audio/perc 30.wav');
+                audio.playbackRate = 1.44; // CHANGE THIS TO ADJUST SPEED (0.5 = half speed, 2 = double speed)
+                audio.play().catch(e => console.log('Audio play failed:', e));
+            }
             setTimeout(() => check.classList.remove('bounce'), 200);
             setTimeout(() => {
                 todos[idx].done = !todos[idx].done;
@@ -127,12 +152,68 @@ document.getElementById('clear-all-btn').addEventListener('click', () => {
     }
 });
 
-// Fidget button - shake all items
-document.getElementById('fidget-btn').addEventListener('click', () => {
+// Fidget button - GIF with pause/play + todo shake
+const fidgetBtn = document.getElementById('fidget-btn');
+const fidgetGif = document.getElementById('fidget-gif');
+let isPlaying = false;
+let speedLevel = 20;
+
+// Audio setup for fidget sound
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+let fidgetSoundBuffer = null;
+
+// Load fidget sound on page load
+fetch('assets/audio/lightningbulb-spacebar-click-keyboard-199448.mp3')
+    .then(response => response.arrayBuffer())
+    .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+    .then(audioBuffer => {
+        fidgetSoundBuffer = audioBuffer;
+    })
+    .catch(e => console.log('Failed to load fidget sound:', e));
+
+function playFidgetSound() {
+    if (!fidgetSoundBuffer) return;
+    
+    const source = audioContext.createBufferSource();
+    source.buffer = fidgetSoundBuffer;
+    
+    // EDIT THESE VALUES:
+    source.playbackRate.value = 1.2; // SPEED (0.5 = half speed, 2 = double speed)
+    source.detune.value = -100; // PITCH in cents (-1200 to 1200, each 100 = one semitone)
+    
+    source.connect(audioContext.destination);
+    source.start(0);
+}
+
+fidgetBtn.addEventListener('click', () => {
+    // Play sound
+    playFidgetSound();
+    
+    // Shake todos
     document.querySelectorAll('#todo-list li').forEach(li => {
         li.classList.add('fidget');
-        setTimeout(() => li.classList.remove('fidget'), 500);
+        setTimeout(() => li.classList.remove('fidget'), 250);
     });
+    
+    // Play GIF with speed control
+    if (!isPlaying) {
+        isPlaying = true;
+        fidgetGif.classList.add('playing');
+        
+        // Restart GIF by reloading
+        const src = fidgetGif.src;
+        fidgetGif.src = '';
+        setTimeout(() => {
+            fidgetGif.src = src + '?t=' + Date.now();
+        }, 1);
+        
+        // Stop after 2 seconds
+        setTimeout(() => {
+            fidgetGif.classList.remove('playing');
+            isPlaying = false;
+        }, 2000);
+
+    }
 });
 
 render();
