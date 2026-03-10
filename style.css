@@ -1,0 +1,347 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 0 20px;
+    background: linear-gradient(135deg, #f7f9f5 0%, #eef4e8 100%);
+    color: #2d3b2d;
+}
+
+h1 {
+    text-align: center;
+    color: #4a6139;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.08);
+    font-weight: 700;
+}
+
+#todo-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+#todo-form input {
+    flex: 1;
+    padding: 8px;
+    font-size: 1rem;
+    border: 2px solid #4a6139;
+    border-radius: 4px;
+    transition: border-color 0.3s;
+}
+
+#todo-form input:focus {
+    outline: none;
+    border-color: #789854;
+}
+
+#todo-form button {
+    background: #4a6139;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.1s;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
+
+#todo-form button:hover {
+    background: #789854;
+}
+
+#todo-form button:active {
+    transform: scale(0.98);
+}
+
+#actions {
+    display: flex;
+    gap: 8px;
+    margin: 20px 0;
+    justify-content: center;
+}
+
+#actions button {
+    background: #4a6139;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.1s;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+#actions button:hover {
+    background: #789854;
+}
+
+#actions button:active {
+    transform: scale(0.98);
+}
+
+#todo-list {
+    list-style: none;
+    padding: 0;
+}
+
+#todo-list li {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #ccc;
+    /* no default animation; only new items get one */
+    transition: opacity 0.8s ease-in-out, background 0.8s ease-in-out;
+}
+
+/* animation helper for new items */
+#todo-list li.new {
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: fadeIn 0.3s forwards;
+}
+
+#todo-list li.fade {
+    opacity: 0.3;
+    transition: opacity 0.8s ease-in-out;
+}
+
+#todo-list li.faded {
+    background: #ffcccc;
+    opacity: 0.5;
+    transition: background 0.8s ease-in-out, opacity 0.8s ease-in-out;
+}
+
+#todo-list li.faded span {
+    text-decoration: line-through;
+    color: #a00;
+}
+
+#todo-list li:hover {
+    background: rgba(74, 97, 57, 0.04);
+}
+
+#todo-list li.done span {
+    text-decoration: line-through;
+    color: #888;
+    opacity: 0.6;
+}
+
+button.check {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #4a6139;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, border-color 0.2s, opacity 0.3s;
+    flex-shrink: 0;
+    margin-left: auto; /* push check to the right */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+button.check.done {
+    background: #4a6139;
+    border-color: #4a6139;
+}
+
+button.check.done::after {
+    content: '✔';
+    color: white;
+    font-size: 0.9rem;
+}
+
+button.check:active {
+    transform: scale(0.95);
+}
+
+button.check.bounce {
+    animation: bounceShake 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+button.check:hover {
+    border-color: #789854;
+}
+
+button.dropdown {
+    background: none;
+    border: none;
+    color: #555;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0 4px;
+    transition: color 0.2s;
+}
+
+button.dropdown:hover {
+    color: #000;
+}
+
+/* dropdown menu panel */
+.dropdown-menu {
+    position: absolute;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    display: none;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.dropdown-menu.show {
+    display: flex;
+}
+
+.dropdown-menu button {
+    background: none;
+    border: none;
+    padding: 6px 12px;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.dropdown-menu button:hover {
+    background: #f0f0f0;
+}
+
+/* mark an item to fade with red X */
+button.fade-action {
+    background: #c00 !important;
+    border-color: #c00 !important;
+    opacity: 1 !important;
+    transition: background 0.8s ease-in-out, border-color 0.8s ease-in-out;
+}
+
+button.fade-action::after {
+    content: '✖';
+    color: white;
+    font-size: 0.9rem;
+}
+#todo-list li span {
+    transition: color 0.3s, opacity 0.3s;
+}
+
+select.options {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><path fill="%23333" d="M0 0l5 6 5-6z"/></svg>') no-repeat right 8px center/10px 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 4px 24px 4px 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    flex-shrink: 0;
+    width: 40px;
+}
+
+select.options:focus {
+    outline: none;
+    border-color: #789854;
+}
+
+/* fade popup notification */
+.fade-text {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    color: #c00;
+    font-weight: bold;
+    font-size: 1.5rem;
+    display: none;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 10;
+}
+
+.fade-text.show {
+    display: block;
+    animation: fadePopOut 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadePopOut {
+    0% {
+        transform: translate(-50%, -50%) scale(0.3);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.3);
+        opacity: 0;
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.25);
+    }
+}
+
+@keyframes bounceShake {
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+    15% {
+        transform: scale(1.08) rotate(-3deg);
+    }
+    30% {
+        transform: scale(1.12) rotate(3deg);
+    }
+    45% {
+        transform: scale(1.1) rotate(-2deg);
+    }
+    60% {
+        transform: scale(1.05) rotate(1deg);
+    }
+    75% {
+        transform: scale(1.02) rotate(-0.5deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+@keyframes fidget {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-3px);
+    }
+    50% {
+        transform: translateX(3px);
+    }
+    75% {
+        transform: translateX(-3px);
+    }
+}
+
+#todo-list li.fidget {
+    animation: fidget 0.5s ease-in-out;
+}
+
