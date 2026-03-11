@@ -310,7 +310,7 @@ function render() {
             if (todo.status === 'faded') return;
             check.classList.add('bounce');
             if (todo.status !== 'done') {
-                const audio = new Audio('assets/audio/perc 30.wav');
+                const audio = new Audio('assets/audio/Perc 30.wav');
                 audio.playbackRate = 1.44;
                 audio.play().catch(e => console.log('Audio play failed:', e));
             }
