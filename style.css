@@ -1,4 +1,116 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+/* Auth Screen */
+#auth-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('assets/gifs/osaka-azumanga-daioh.gif');
+    background-size: auto;
+    background-position: center;
+    background-repeat: repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+#auth-screen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(247, 249, 245, 0.7) 0%, rgba(238, 244, 232, 0.7) 100%);
+    z-index: 0;
+}
+
+.auth-container {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 350px;
+    position: relative;
+    z-index: 10;
+}
+
+.auth-container h1 {
+    margin-bottom: 10px;
+}
+
+.auth-container p {
+    color: #888;
+    margin-bottom: 20px;
+}
+
+#auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#auth-form input {
+    padding: 10px;
+    border: 2px solid #4a6139;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.auth-buttons button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+#login-btn {
+    background: #4a6139;
+    color: white;
+}
+
+#register-btn {
+    background: #eef4e8;
+    color: #4a6139;
+    border: 1px solid #4a6139;
+}
+
+#login-btn:hover { background: #789854; }
+#register-btn:hover { background: #dce6d2; }
+
+/* Main Content Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#logout-btn {
+    background: none;
+    border: 1px solid #4a6139;
+    color: #4a6139;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+#logout-btn:hover {
+    background: #f0f0f0;
+}
 
 body {
     font-family: 'Poppins', sans-serif;
@@ -63,9 +175,10 @@ h1 {
 
 #actions {
     display: flex;
-    gap: 8px;
+    gap: 12px;
     margin: 20px 0;
     justify-content: center;
+    align-items: center;
 }
 
 #actions button {
@@ -89,6 +202,63 @@ h1 {
     transform: scale(0.98);
 }
 
+.toggle-switch {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-switch.party-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 50;
+}
+
+.toggle-switch input {
+    display: none;
+}
+
+.toggle-switch .slider {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background-color: #ccc;
+    border-radius: 12px;
+    transition: background-color 0.3s;
+    border: 2px solid #4a6139;
+}
+
+.toggle-switch input:checked + .slider {
+    background-color: #ff6b9d;
+}
+
+.toggle-switch .slider::before {
+    content: '';
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 2px;
+    bottom: 1px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+.toggle-switch input:checked + .slider::before {
+    transform: translateX(20px);
+}
+
+.toggle-switch .label-text {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #4a6139;
+    white-space: nowrap;
+}
+
 #fidget-btn {
     position: fixed;
     top: 10px;
@@ -103,7 +273,7 @@ h1 {
     font-size: 0.65rem;
     color: white;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-    transition: transform 0.1s;
+    transition: transform 0.1s, filter 0.2s;
     padding: 0;
     display: flex;
     align-items: center;
@@ -113,39 +283,25 @@ h1 {
     z-index: 100;
 }
 
-#fidget-gif {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    opacity: 0;
-    transition: opacity 0.1s;
-    animation: gifSpeed 0.5s steps(1) paused;
-}
-
-#fidget-gif.playing {
-    opacity: 1;
-    animation: gifSpeed 0.3s steps(1) running;
-}
-
-@keyframes gifSpeed {
-    0% { filter: brightness(1); }
-    100% { filter: brightness(1); }
-}
-
-#fidget-btn span {
-    position: relative;
-    z-index: 10;
-}
-
 #fidget-btn:hover {
     transform: scale(1.05);
 }
 
 #fidget-btn:active {
     transform: scale(0.95);
+}
+
+#fidget-btn.brighten {
+    animation: brighten 0.2s ease-in-out;
+}
+
+@keyframes brighten {
+    0%, 100% {
+        filter: brightness(1);
+    }
+    50% {
+        filter: brightness(1.5);
+    }
 }
 
 #todo-list {
@@ -297,8 +453,12 @@ button.fade-action::after {
     color: white;
     font-size: 0.9rem;
 }
-#todo-list li span {
+#todo-list li span.todo-title {
     transition: color 0.3s, opacity 0.3s;
+    flex: 1;
+    padding: 2px 4px;
+    border-radius: 4px;
+    outline: none;
 }
 
 select.options {
@@ -407,5 +567,47 @@ select.options:focus {
 
 #todo-list li.fidget {
     animation: fidget 0.25s ease-in-out;
+}
+
+.sortable-ghost {
+    opacity: 0.4;
+    background: #eef4e8 !important;
+}
+
+#party-container {
+    display: none;
+    text-align: center;
+    margin-top: 30px;
+    opacity: 0;
+    animation: slowFadeIn 3s ease-in-out forwards;
+}
+
+#party-container.hidden {
+    display: none !important;
+    animation: none;
+    opacity: 0;
+}
+
+#party-gif {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+#party-video {
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+@keyframes slowFadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
