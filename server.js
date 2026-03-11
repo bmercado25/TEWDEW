@@ -28,10 +28,35 @@ const TodoSchema = new mongoose.Schema({
 const User = mongoose.model('User', UserSchema);
 const Todo = mongoose.model('Todo', TodoSchema);
 
-// DATABASE CONNECTION
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('Connected to MongoDB gng'))
-    .catch(err => console.error('MongoDB connection error:', err));
+// DATABASE CONNECTION (cached for serverless)
+let cachedDb = null;
+
+async function connectDB() {
+    if (cachedDb) return cachedDb;
+    
+    if (!process.env.MONGODB_URI) {
+        console.error('MONGODB_URI is not defined!');
+        return null;
+    }
+    
+    try {
+        await mongoose.connect(process.env.MONGODB_URI);
+        cachedDb = mongoose.connection;
+        console.log('Connected to MongoDB gng');
+        return cachedDb;
+    } catch (err) {
+        console.error('MongoDB connection error:', err);
+        return null;
+    }
+}
+
+connectDB();
+
+// Ensure DB is connected before API calls
+app.use('/api', async (req, res, next) => {
+    await connectDB();
+    next();
+});
 
 // AUTH ROUTES
 app.post('/api/auth', async (req, res) => {
