@@ -1,4 +1,6 @@
-require('dotenv').config();
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
@@ -58,9 +60,20 @@ app.use('/api', async (req, res, next) => {
     next();
 });
 
+// DEBUG ENDPOINT - remove after fixing
+app.get('/api/debug', (req, res) => {
+    res.json({
+        hasMongoUri: !!process.env.MONGODB_URI,
+        hasJwtSecret: !!process.env.JWT_SECRET,
+        nodeEnv: process.env.NODE_ENV,
+        mongoUriStart: process.env.MONGODB_URI ? process.env.MONGODB_URI.substring(0, 20) + '...' : 'undefined'
+    });
+});
+
 // AUTH ROUTES
 app.post('/api/auth', async (req, res) => {
     const { action, username, password } = req.body;
+    console.log('Auth attempt:', { action, username, hasPassword: !!password });
     try {
         if (action === 'register') {
             const hashedPassword = await bcrypt.hash(password, 10);
@@ -70,6 +83,7 @@ app.post('/api/auth', async (req, res) => {
             res.status(201).json({ token, username });
         } else {
             const user = await User.findOne({ username });
+            console.log('User found:', !!user);
             if (!user || !(await bcrypt.compare(password, user.password))) {
                 return res.status(400).json({ error: 'Invalid credentials' });
             }
@@ -77,7 +91,8 @@ app.post('/api/auth', async (req, res) => {
             res.json({ token, username });
         }
     } catch (err) {
-        res.status(500).json({ error: 'Auth failed' });
+        console.error('Auth error:', err.message, err.stack);
+        res.status(500).json({ error: 'Auth failed', details: err.message });
     }
 });
 
